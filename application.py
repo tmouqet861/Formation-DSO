@@ -40,82 +40,6 @@ def files():
         fichier.append(item)
     return render_template('files.html', files=fichier)
 
-@app.route('/view')
-def view_file():
-    filename = request.args.get('file')  # Paramètre `file` passé dans l'URL
-    base_path = os.path.abspath('./files')  # Répertoire sécurisé
-    requested_path = os.path.abspath(os.path.join(base_path, filename))
-
-    # Vérification de sécurité pour empêcher la sortie du répertoire
-    #if not requested_path.startswith(base_path) or not os.path.isfile(requested_path):
-    #    abort(403)
-
-    try:
-        with open(requested_path, 'r') as file:
-            content = file.read()  # Lire le contenu du fichier
-        # Afficher le contenu dans le navigateur
-        #return render_template_string("""
-        #    <html>
-        #    <head><title>Contenu du fichier</title></head>
-        #    <body>
-        #        <h1>Contenu de {{ filename }}</h1>
-        #        <pre>{{ content }}</pre>
-        #    </body>
-        #    </html>
-        #""", filename=filename, content=content)
-        return render_template('filecontent.html', filename=filename, content=content)
-    except Exception as e:
-        abort(500, description=str(e))
-
-#@app.route('/view')
-#def download():
-#    filename = request.args.get('file')
-#    try:
-#        return send_file(f"./files/{filename}")
-#    except FileNotFoundError:
-#        abort(404)
-
-#@app.route('/view')
-#def view(filename):
-#    filename = request.args.get('filename')
-    #path = f'{Path(__file__).parent}'
-#    file = f"./files/{filename}"
-    #print(f"file = {file} ")
-#    with open(file) as f:
-#        file_content = f.read()
-#        return send_file(f"./files/{filename}")
-    
-    #dir = "/files"
-    #print(f"file = {file_name}")
-    #file = os.path.join(dir,filename)
-    #print(f"file = {file}")
-    #send_file(file_name)
-    #dirname = os.path.dirname(path)
-    #print(f"DIRNAME {dirname}")
-    #if not dirname.startwith("/"):
-    #dirname = f"/{dirname}"
-    #filename = os.path.basename
-    #print(f"ICI {dirname}, {filename}")
-    #return send_from_directory(dirname, filename)
-
-
-    #path = f'{Path(__file__).parent}'
-    #file_path = f'{path}/{filename}'
-    #print(file_path)
-    #return send_file(file_path, as_attachment=False)
-    
-    #file_name = request.args.get('file')
-    #print(f'file_name = {file_name}')
-    #path = f'{Path(__file__).parent}'
-    #full_path = f'{path}\\files\{file_name}'
-    #print(f'full_path = {full_path}')
-    #try : 
-    #    return send_file(full_path)
-    #except FileNotFoundError as err:
-    #    print(f'Fichier not found : {err}')
-    #except Exception as allerr:
-    #    print(f'Erreur : {allerr}')
-
 #Crée le /upload du HTML et permet de sélectionner un fichier et de l'envoyer
 @app.route('/uploaded', methods=['GET', 'POST'])
 def uploaded():
@@ -130,7 +54,6 @@ def uploaded():
             err = "No selected file"
             return render_template('error.html', err=err)
             #return f'{Fore.RED}[-] No selected file{Fore.RESET}'
-        
         file_name = file.filename
         #Check si le fichier entré est bon (test pour répondre à CodeQL)
         if ".." in file_name or "/" in file_name or "\\" in file_name:
@@ -139,13 +62,34 @@ def uploaded():
             #raise ValueError(f"{Fore.RED}[-] Invalid filename : {file.filename}{Fore.RESET}")
         else:
             file_content = process_file(file_name)
+            
             string_file_content = str(file_content)
+            print(f'FILENAME {file_name}')
             if string_file_content.__contains__('Errno'):
                 err = file_content
                 return render_template('error.html', err=err)
             else:
                 print(f"{Fore.GREEN}[+] file uploded ! {file_name}{Fore.RESET}")
+                path = f'{Path(__file__).parent}'
+                path_full_write = f"{path}\\files\{file_name}"
+                content = readfile(file_name)
+                print(f'CHEM COMPLET : {file_name}')
+                print(f"content = {content}")
+                writefile(path_full_write, content)
+
+
     return render_template('upload.html', file_content=file_content)
+
+def  readfile(file_name):
+    with open (file_name, "r") as fichier:
+        content = fichier.read()
+    return content
+
+
+def writefile(full_path, content):
+    with open(full_path, "w+") as fichier:
+        fichier.write(content)
+
 
 #Utilisation de la fonction vulnérable selon le POC de la CVE-2020-1747
 def process_file(file_name):
