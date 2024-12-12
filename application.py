@@ -54,7 +54,6 @@ def uploaded():
             file_content = process_file(file_name)
             
             string_file_content = str(file_content)
-            print(f'FILENAME {file_name}')
             if string_file_content.__contains__('Errno'):
                 err = file_content
                 return render_template('error.html', err=err)
@@ -63,8 +62,6 @@ def uploaded():
                 path = f'{Path(__file__).parent}'
                 path_full_write = f"{path}\\files\{file_name}"
                 content = readfile(file_name)
-                print(f'CHEM COMPLET : {file_name}')
-                print(f"content = {content}")
                 writefile(path_full_write, content)
 
 
