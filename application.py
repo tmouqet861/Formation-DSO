@@ -30,16 +30,6 @@ def upload():
 def error():
     return render_template('error.html')
 
-@app.route('/files')
-def files():
-    path = f'{Path(__file__).parent}'
-    file_path = path + "\\files"
-    print(file_path)
-    fichier = []
-    for item in os.listdir(file_path):
-        fichier.append(item)
-    return render_template('files.html', files=fichier)
-
 #Crée le /upload du HTML et permet de sélectionner un fichier et de l'envoyer
 @app.route('/uploaded', methods=['GET', 'POST'])
 def uploaded():
