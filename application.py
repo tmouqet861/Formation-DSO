@@ -6,8 +6,7 @@ import yaml
 import subprocess
 import os
 from colorama import Style, Fore, init
-from flask import Flask, render_template, request, redirect, url_for, abort, \
-    send_from_directory
+from flask import Flask, render_template, send_file, request, redirect, url_for, abort, render_template_string, send_from_directory
 from pathlib import Path
 import sys
 
@@ -25,6 +24,7 @@ def index():
 @app.route('/upload')
 def upload():
     return render_template('upload.html')
+    
 
 @app.route('/error')
 def error():
@@ -44,7 +44,6 @@ def uploaded():
             err = "No selected file"
             return render_template('error.html', err=err)
             #return f'{Fore.RED}[-] No selected file{Fore.RESET}'
-        
         file_name = file.filename
         #Check si le fichier entré est bon (test pour répondre à CodeQL)
         if ".." in file_name or "/" in file_name or "\\" in file_name:
@@ -53,13 +52,31 @@ def uploaded():
             #raise ValueError(f"{Fore.RED}[-] Invalid filename : {file.filename}{Fore.RESET}")
         else:
             file_content = process_file(file_name)
+            
             string_file_content = str(file_content)
             if string_file_content.__contains__('Errno'):
                 err = file_content
                 return render_template('error.html', err=err)
             else:
-                print(f"{Fore.GREEN}[+] file uploded !{Fore.RESET}")
+                print(f"{Fore.GREEN}[+] file uploded ! {file_name}{Fore.RESET}")
+                path = f'{Path(__file__).parent}'
+                path_full_write = f"{path}\\files\{file_name}"
+                content = readfile(file_name)
+                writefile(path_full_write, content)
+
+
     return render_template('upload.html', file_content=file_content)
+
+def  readfile(file_name):
+    with open (file_name, "r") as fichier:
+        content = fichier.read()
+    return content
+
+
+def writefile(full_path, content):
+    with open(full_path, "w+") as fichier:
+        fichier.write(content)
+
 
 #Utilisation de la fonction vulnérable selon le POC de la CVE-2020-1747
 def process_file(file_name):
@@ -121,5 +138,6 @@ if __name__ == '__main__':
     #Récupère le path de l'application
     app.run(host="0.0.0.0", port=5000)
     directory = f'{Path(__file__).parent}'
+    print(directory)
     gen_reqtxt(directory)
-    app.run(debug=False)
+    app.run(debug=True)

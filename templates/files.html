@@ -1,0 +1,62 @@
+<link rel="stylesheet" type="text/css" href="../static/styles/style.css" />
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formation-HMP</title>
+</head>
+<body>
+    <!--
+    <div class="logo-container">
+        <a href="#"><img src="../static/images/Logo_site_wobg.png" alt="Logo du site" class="logo"></a>
+    </div>
+    -->
+    <nav class="menu">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/upload">Upload</a></li>
+            <!-- <li><a href="/files">Files</a></li> -->
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <!--<section id="uploadhtml">
+        <h1>Upload a YAML File</h1>
+
+    </section> -->
+    <section id="uploadhtml">
+    <h1> Files in directory </h1></section>
+    <ul>
+        {% for file in files%}
+        <li>
+            <a href="http://localhost:5000/view?file={{ file }}" >{{ file }}</a>
+            <!-- {{ file }} -->
+        </li>
+        {% endfor %}
+    </ul>
+    
+    <!-- 
+    <form action="http://localhost:5000/view" method="get">
+        <label for="file">Nom du fichier :</label>d
+        <input type="text" id="file" name="file">
+        <button type="submit">Voir le contenu</button>
+    </form>
+    -->
+
+    
+    <br><br>
+    <br><br>
+    <br><br>
+    <br><br>
+    <br><br>
+    <br><br>
+    <br><br>
+
+    <!-- Pied de page 
+        <p>&copy; 2024 Site de Configuration. Tous droits réservés.</p>
+        <p><a href="#">Politique de confidentialité</a> | <a href="#">Conditions d'utilisation</a></p>
+    </footer> -->
+</body>
+</html>
